@@ -57,6 +57,7 @@
     "lodash": "^4.17.11",
     "lodash-es": "^4.17.11",
     "rxjs": "6.3.3",
+    "request-promise": "^4.2.5",
     "zone.js": "^0.8.26"
   },
   "devDependencies": {

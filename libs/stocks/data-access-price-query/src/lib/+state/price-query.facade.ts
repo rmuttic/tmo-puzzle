@@ -15,20 +15,6 @@ export class PriceQueryFacade {
     )
   );
 
-  priceQueriesWithDate(stDate: Date, endDate: Date) {
-    return this.store.pipe(
-      select(getAllPriceQueries),
-      map(priceQueries =>
-        priceQueries
-          .filter(
-            data =>
-              new Date(data.date).getTime() >= stDate.getTime() &&
-              new Date(data.date).getTime() <= endDate.getTime()
-          )
-          .map(priceQuery => [priceQuery.date, priceQuery.close])
-      )
-    );
-  }
 
   constructor(private store: Store<PriceQueryPartialState>) {}
 

@@ -15,8 +15,7 @@ import { takeUntil } from 'rxjs/operators';
 })
 export class ChartComponent implements OnInit,OnDestroy {
 
-  @Input() data$: Observable<any>;
-  chartData: any;
+  @Input()chartData: any;
   unsubscribe: Subject<void> = new Subject();
 
   chart: {
@@ -36,9 +35,6 @@ export class ChartComponent implements OnInit,OnDestroy {
       columnNames: ['period', 'close'],
       options: { title: `Stock price`, width: '600', height: '400' }
     };
-
-    this.data$.pipe(takeUntil(this.unsubscribe)).subscribe(
-      newData => (this.chartData = newData));
   }
 
   ngOnDestroy(): void {

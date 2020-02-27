@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { PriceQueryFacade } from '@coding-challenge/stocks/data-access-price-query';
 import { max } from 'date-fns';
 import { debounceTime,takeUntil } from 'rxjs/operators';
-import { Subject } from 'rxjs';
+import { Subject, from } from 'rxjs';
 
 @Component({
   selector: 'coding-challenge-stocks',
@@ -18,8 +18,11 @@ export class StocksComponent implements OnInit,OnDestroy {
   toDate: Date;
   maxDate: Date = new Date();
   startDate: Date;
-  quotes$: any;
+  quotes$= this.priceQuery.priceQueries$;
+  chartData: any;
   unsubscribe: Subject<void> = new Subject();
+  fDate: Date;
+  tDate: Date;
 
   private calcDaysDiff(fromDate:Date) : void {
     const fromDat: Date = new Date(fromDate);
@@ -59,8 +62,23 @@ export class StocksComponent implements OnInit,OnDestroy {
 
   ngOnInit() {
     this.stockPickerForm.valueChanges.pipe(takeUntil(this.unsubscribe)).pipe(debounceTime(320)).subscribe(() => {
-    this.startDate = this.stockPickerForm.get('fromDate').value;
-    this.fetchQuote();
+      this.startDate = this.stockPickerForm.get('fromDate').value;
+      this.fetchQuote();
+    });
+
+    this.quotes$.subscribe((data: any) => {
+
+      if (data && data.length > 0) {
+
+        this.chartData = data.filter((x: any) => {
+          //return  x[0] >= this.fDate &&  x[0] <= this.tDate
+          return new Date(x[0]).getTime() >= this.fDate.getTime() &&
+              new Date(x[0]).getTime() <= this.tDate.getTime()
+        });
+      } else {
+        this.chartData = data;
+      }
+
     });
   }
 
@@ -69,7 +87,8 @@ export class StocksComponent implements OnInit,OnDestroy {
       const { symbol, fromDate, toDate } = this.stockPickerForm.value;
       this.calcDaysDiff(fromDate);
       this.priceQuery.fetchQuote(symbol, this.period);
-      this.quotes$ = this.priceQuery.priceQueriesWithDate(fromDate, toDate);
+      this.fDate = fromDate;
+      this.tDate = toDate;
     }
   }
 

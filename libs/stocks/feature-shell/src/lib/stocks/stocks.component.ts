@@ -47,4 +47,9 @@ export class StocksComponent implements OnInit {
       this.priceQuery.fetchQuote(symbol, period);
     }
   }
+
+  ngOnDestroy(): void {
+    this.unsubscribe.next();
+    this.unsubscribe.complete();
+  }
 }
